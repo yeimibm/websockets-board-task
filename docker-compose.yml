@@ -1,0 +1,39 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8000}
+    environment:
+      PORT: "3000"
+      HOST: "0.0.0.0"
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      realtime-api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  realtime-api:
+    build:
+      context: ./apps/realtime-api
+      dockerfile: Dockerfile
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "8000"
+    ports:
+      - "${REALTIME_API_PORT:-8000}:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    restart: unless-stopped

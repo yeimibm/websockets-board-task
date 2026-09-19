@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { @apply m-0 bg-canvas text-ink antialiased; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+  button, input { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
+
+@layer components {
+  .primary-button { @apply inline-flex items-center justify-center rounded-xl bg-brand-500 px-5 py-3 font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-brand-600; }
+  .secondary-button { @apply rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-semibold text-slate-600 transition hover:border-brand-500 hover:text-brand-600; }
+  .eyebrow { @apply mb-1 text-xs font-bold uppercase tracking-[.16em] text-brand-500; }
+  .brand { @apply flex items-center gap-3 text-lg text-ink no-underline; }
+  .brand > span { @apply grid h-10 w-10 place-items-center rounded-xl bg-brand-500 text-2xl text-white; }
+  .dashboard-shell { @apply min-h-screen lg:grid; grid-template-columns: 280px 1fr; }
+  .dashboard-sidebar { @apply hidden border-r border-slate-200 bg-white p-7 lg:flex lg:flex-col; }
+  .dashboard-sidebar nav { @apply mt-12 flex flex-col gap-2; }
+  .dashboard-sidebar nav a { @apply rounded-xl px-4 py-3 font-medium text-slate-500; }
+  .dashboard-sidebar nav a.active { @apply bg-brand-50 text-brand-600; }
+  .sidebar-help { @apply mt-auto rounded-2xl bg-slate-900 p-5 text-white; }
+  .sidebar-help p { @apply mt-2 text-sm leading-6 text-slate-300; }
+  .dashboard-content { @apply mx-auto w-full max-w-[1400px] p-5 sm:p-9 lg:p-12; }
+  .dashboard-notice { @apply mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700; }
+  .dashboard-header { @apply flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between; }
+  .dashboard-header h1 { @apply m-0 text-3xl font-bold sm:text-4xl; }
+  .dashboard-header p:not(.eyebrow) { @apply mt-2 text-slate-500; }
+  .filters { @apply my-8 flex flex-col gap-3 sm:flex-row; }
+  .search-box { @apply flex max-w-xl flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm focus-within:border-brand-500; }
+  .search-box span { @apply text-2xl text-slate-400; }
+  .search-box input { @apply w-full border-0 bg-transparent py-3 outline-none; }
+  .project-grid { @apply grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3; }
+  .project-folder { @apply relative flex min-h-48 flex-col items-start overflow-hidden rounded-[1.5rem] border border-white bg-white p-6 text-left shadow-soft transition hover:-translate-y-1 hover:border-indigo-200; }
+  .folder-tab { @apply absolute left-0 top-0 h-2 w-24 rounded-br-full bg-amber-300; }
+  .folder-icon { @apply mb-5 text-4xl text-amber-400; }
+  .project-folder strong { @apply text-lg; }
+  .room-code { @apply mt-1 rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-500; }
+  .folder-meta { @apply mt-auto flex w-full justify-between pt-5 text-xs text-slate-400; }
+  .empty-projects { @apply col-span-full rounded-3xl border-2 border-dashed border-slate-200 py-20 text-center text-slate-500; }
+  .empty-projects > span { @apply text-5xl text-slate-300; }
+  .calendar-card { @apply mt-9 rounded-2xl border border-slate-100 bg-slate-50 p-4; }
+  .calendar-heading { @apply mb-4 flex justify-between text-sm; }
+  .calendar-heading span { @apply text-slate-400; }
+  .calendar-grid { @apply grid grid-cols-7 gap-1 text-center text-xs; }
+  .weekdays { @apply mb-2 font-bold text-slate-400; }
+  .calendar-day { @apply aspect-square rounded-lg text-slate-600 hover:bg-indigo-100; }
+  .calendar-day.today { @apply font-bold text-brand-600; }
+  .calendar-day.selected { @apply bg-brand-500 text-white; }
+  .clear-date { @apply mt-3 w-full text-xs font-semibold text-brand-600; }
+  .modal { @apply w-[min(92vw,460px)] rounded-3xl border-0 p-0 shadow-2xl; }
+  .modal::backdrop { background: rgba(24, 31, 48, .55); backdrop-filter: blur(5px); }
+  .modal form { @apply relative flex flex-col gap-5 p-8; }
+  .modal h2 { @apply m-0 text-2xl; }
+  .modal label { @apply flex flex-col gap-2 text-sm font-semibold; }
+  .modal input { @apply rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-500; }
+  .modal-close { @apply absolute right-5 top-4 text-2xl text-slate-400; }
+  .field-error { @apply -mt-3 min-h-5 text-sm font-medium text-rose-600; }
+  .modal-copy { @apply -mt-2 mb-0 text-sm leading-6 text-slate-500; }
+  .board-shell { @apply h-screen overflow-hidden bg-slate-100; }
+  .board-header { @apply flex h-16 items-center gap-3 bg-sky-950 px-3 text-white shadow-md sm:px-5; }
+  .board-brand { @apply flex shrink-0 items-center gap-2 text-white no-underline; }
+  .board-brand > span { @apply grid h-8 w-8 place-items-center rounded-lg bg-white/15 text-xl; }
+  .board-brand strong { @apply hidden text-sm sm:block; }
+  .board-title { @apply min-w-0 border-l border-white/20 pl-3; }
+  .board-title h1 { @apply m-0 max-w-32 truncate text-sm font-bold sm:max-w-64 sm:text-base; }
+  .board-title > span { @apply hidden text-[11px] text-sky-200 sm:block; }
+  .board-header-actions { @apply ml-auto flex items-center gap-3; }
+  .avatar-stack { @apply flex -space-x-2; }
+  .avatar { @apply grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-white text-xs font-bold text-white; }
+  .avatar-small { @apply h-8 w-8; }
+  .avatar-overflow { @apply bg-slate-600; }
+  .share-button { @apply flex items-center gap-2 rounded-md bg-sky-100 px-3 py-2 text-sm font-bold text-sky-950 transition hover:bg-white; }
+  .share-button span { @apply hidden sm:inline; }
+  .header-menu { @apply rounded-md px-2 py-2 text-sm font-bold text-white hover:bg-white/10; }
+  .status-pill { @apply hidden items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-sky-100 sm:flex; }
+  .status-pill.status-ready { @apply bg-emerald-400/20 text-emerald-100; }
+  .status-dot { @apply h-2 w-2 rounded-full bg-slate-400; }
+  .status-ready .status-dot { @apply bg-emerald-500; }
+  .board-body { @apply flex; height: calc(100vh - 4rem); }
+  .people-panel { @apply fixed bottom-0 right-0 top-16 z-40 hidden w-[min(22rem,92vw)] shrink-0 flex-col border-l border-slate-200 bg-white p-6 shadow-2xl lg:static lg:z-auto lg:flex lg:w-64 lg:border-l-0 lg:border-r lg:shadow-none; }
+  .people-panel.open { @apply flex; }
+  .people-heading { @apply flex items-start justify-between; }
+  .people-heading > button { @apply text-2xl text-slate-400 lg:hidden; }
+  .people-panel h2 { @apply m-0 text-lg; }
+  .people-copy { @apply mt-3 text-sm leading-5 text-slate-500; }
+  #participants { @apply mt-7 flex flex-col gap-4; }
+  .participant-row { @apply flex items-center gap-3; }
+  .participant-row strong, .participant-row small { @apply block truncate; }
+  .participant-row strong em { @apply text-xs font-normal not-italic text-slate-400; }
+  .participant-row small { @apply mt-0.5 flex items-center gap-1.5 text-xs text-emerald-600; }
+  .participant-row small i { @apply block h-1.5 w-1.5 rounded-full bg-emerald-500; }
+  .empty-copy { @apply text-sm text-slate-400; }
+  .invite-panel-button { @apply mt-6 w-full rounded-lg border border-slate-200 px-3 py-2 text-left text-sm font-semibold text-sky-700 hover:bg-sky-50; }
+  .sync-note { @apply mt-auto rounded-2xl bg-brand-50 p-4 text-sm text-brand-600; }
+  .sync-note p { @apply mb-0 mt-2 text-xs leading-5 text-slate-500; }
+  .board-workspace { @apply relative min-w-0 flex-1 overflow-hidden bg-canvas; }
+  .toolbar { @apply absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 gap-1 rounded-xl border border-slate-700 bg-slate-900 p-1.5 shadow-xl sm:bottom-auto sm:top-4 sm:border-slate-200 sm:bg-white; }
+  .tool-button { @apply flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 sm:px-4; }
+  .toolbar .tool-button { @apply text-slate-300 sm:text-slate-500; }
+  .toolbar .tool-button:hover { @apply bg-slate-700 sm:bg-slate-100; }
+  .tool-button span:last-child { @apply hidden sm:inline; }
+  .tool-button.active { @apply bg-brand-500 text-white; }
+  .tool-button:disabled { @apply opacity-40; }
+  .offline-banner { @apply pointer-events-none absolute left-1/2 top-20 z-30 -translate-x-1/2 -translate-y-3 rounded-xl bg-amber-100 px-4 py-2 text-xs font-semibold text-amber-800 opacity-0 transition; }
+  .offline-banner.visible { @apply translate-y-0 opacity-100; }
+  .board-canvas { @apply relative h-full w-full overflow-auto outline-none; min-width: 700px; min-height: 500px; background-color: #f8f9fc; background-image: radial-gradient(#ccd2e4 1px, transparent 1px); background-size: 22px 22px; }
+  .board-canvas[data-tool='block'], .board-canvas[data-tool='connect'] { cursor: crosshair; }
+  .connections { @apply pointer-events-none absolute inset-0 h-[2000px] w-[2400px] overflow-visible; }
+  .connections path[data-connection-id] { pointer-events: stroke; fill: none; stroke: #8993b8; stroke-width: 3; marker-end: url(#arrow); cursor: pointer; }
+  .connections marker path { fill: #8993b8; }
+  .board-block { @apply absolute z-10 flex select-none flex-col justify-center rounded-2xl border border-indigo-100 bg-white px-5 shadow-soft transition-shadow; touch-action: none; }
+  .board-canvas[data-tool='select'] .board-block { cursor: grab; }
+  .board-canvas[data-tool='select'] .board-block.dragging { @apply z-20 border-brand-500 shadow-xl ring-4 ring-indigo-100; cursor: grabbing; }
+  .board-block:hover { @apply border-brand-500 shadow-lg; }
+  .board-block.connecting { @apply ring-4 ring-indigo-200; }
+  .board-block strong { @apply truncate text-base; }
+  .board-block small { @apply mt-1 text-xs text-slate-400; }
+  .block-grip { @apply absolute left-1/2 top-1 -translate-x-1/2 text-xs tracking-widest text-slate-300; }
+  .remote-cursor { @apply pointer-events-none absolute left-0 top-0 z-20 transition-transform duration-75; }
+  .cursor-arrow { @apply text-lg; }
+  .remote-cursor span:last-child { @apply ml-1 rounded-full px-2 py-1 text-xs font-bold text-white; }
+  .empty-board { @apply absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center text-slate-400; }
+  .empty-board > span { @apply text-6xl text-indigo-200; }
+  .empty-board strong { @apply mt-3 text-lg text-slate-600; }
+  .empty-board p { @apply mt-1 text-sm; }
+  .error-toast { @apply pointer-events-none absolute bottom-5 left-1/2 z-30 -translate-x-1/2 translate-y-5 rounded-xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white opacity-0 transition; }
+  .error-toast.visible { @apply translate-y-0 opacity-100; }
+  .share-modal { @apply w-[min(94vw,560px)]; }
+  .copy-field { @apply flex overflow-hidden rounded-xl border border-slate-200 focus-within:border-brand-500; }
+  .copy-field input { @apply min-w-0 flex-1 rounded-none border-0 bg-slate-50 font-mono text-xs; }
+  .copy-field button { @apply shrink-0 bg-sky-700 px-4 text-sm font-bold text-white hover:bg-sky-800; }
+  .share-room-id { @apply m-0 text-xs text-slate-500; }
+  .share-room-id code { @apply ml-2 rounded bg-slate-100 px-2 py-1 text-slate-700; }
+  .copy-feedback { @apply m-0 min-h-5 text-sm font-semibold text-emerald-600; }
+  .join-room-modal .cancel-link { @apply text-center text-sm font-semibold text-slate-500 no-underline hover:text-brand-600; }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@collab/config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "files": ["typescript", "tailwind"],
+  "exports": {
+    "./typescript/base.json": "./typescript/base.json",
+    "./typescript/browser.json": "./typescript/browser.json",
+    "./tailwind/preset": "./tailwind/preset.js"
+  }
+}

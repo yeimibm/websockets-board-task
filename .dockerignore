@@ -1,0 +1,16 @@
+.git
+.gitignore
+node_modules
+**/node_modules
+.pnpm-store
+.turbo
+**/.turbo
+**/dist
+**/coverage
+**/__pycache__
+**/.pytest_cache
+**/.venv
+.env
+.env.*
+!.env.example
+

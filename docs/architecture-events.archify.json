@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura del tablero colaborativo",
+    "output": "architecture-events.html",
+    "quality_profile": "showcase",
+    "viewBox": [1240, 720],
+    "views": [
+      {
+        "id": "request-path",
+        "label": "Flujo principal",
+        "focus": ["browser", "hono", "wsClient", "fastapi", "connectionManager", "roomManager", "boardState"],
+        "note": "La SPA usa HTTP para cargarse y WebSocket para colaborar en tiempo real."
+      },
+      {
+        "id": "authoritative-state",
+        "label": "Estado autoritativo",
+        "focus": ["fastapi", "roomManager", "boardState"],
+        "note": "FastAPI valida, ordena y versiona cada cambio aceptado por sala."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Participantes",
+      "sublabel": "Browser A · B · C",
+      "pos": [40, 250],
+      "size": [145, 70]
+    },
+    {
+      "id": "hono",
+      "type": "frontend",
+      "label": "Hono Web",
+      "sublabel": "SPA + Tailwind · :3000",
+      "pos": [235, 250],
+      "size": [155, 70]
+    },
+    {
+      "id": "wsClient",
+      "type": "frontend",
+      "label": "Cliente WebSocket",
+      "sublabel": "Store + Canvas + reconnect",
+      "pos": [445, 250],
+      "size": [175, 70]
+    },
+    {
+      "id": "fastapi",
+      "type": "backend",
+      "label": "FastAPI",
+      "sublabel": "/ws/rooms/{room_id} · :8000",
+      "pos": [680, 250],
+      "size": [175, 70]
+    },
+    {
+      "id": "connectionManager",
+      "type": "backend",
+      "label": "ConnectionManager",
+      "sublabel": "Sesiones + broadcast",
+      "pos": [920, 120],
+      "size": [180, 70]
+    },
+    {
+      "id": "roomManager",
+      "type": "backend",
+      "label": "RoomManager",
+      "sublabel": "Aislamiento por roomId",
+      "pos": [920, 250],
+      "size": [180, 70]
+    },
+    {
+      "id": "boardState",
+      "type": "database",
+      "label": "BoardState",
+      "sublabel": "Memoria · versión por sala",
+      "tag": "Una instancia",
+      "pos": [920, 380],
+      "size": [180, 74]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "apps/web",
+      "wraps": ["hono", "wsClient"],
+      "pad": 28
+    },
+    {
+      "kind": "region",
+      "label": "apps/realtime-api · estado en memoria",
+      "wraps": ["fastapi", "connectionManager", "roomManager", "boardState"],
+      "pad": 30
+    }
+  ],
+  "connections": [
+    {
+      "id": "browser-http",
+      "from": "browser",
+      "to": "hono",
+      "label": "HTTP · carga SPA",
+      "variant": "default",
+      "labelDy": 59
+    },
+    {
+      "id": "spa-runtime",
+      "from": "hono",
+      "to": "wsClient",
+      "label": "TypeScript en navegador",
+      "labelDy": 59
+    },
+    {
+      "id": "realtime-channel",
+      "from": "wsClient",
+      "to": "fastapi",
+      "label": "WebSocket · eventos incrementales",
+      "variant": "emphasis",
+      "labelDy": -29
+    },
+    {
+      "id": "socket-sessions",
+      "from": "fastapi",
+      "to": "connectionManager",
+      "label": "registro + presencia"
+    },
+    {
+      "id": "room-routing",
+      "from": "fastapi",
+      "to": "roomManager",
+      "label": "valida roomId",
+      "labelDy": 52
+    },
+    {
+      "id": "broadcast-room",
+      "from": "connectionManager",
+      "to": "roomManager",
+      "label": "broadcast aislado",
+      "labelDy": 24
+    },
+    {
+      "id": "authoritative-write",
+      "from": "roomManager",
+      "to": "boardState",
+      "label": "aplica + incrementa versión",
+      "variant": "emphasis",
+      "labelDy": 24
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Cliente → Servidor",
+      "items": [
+        "join_room · entrada a sala",
+        "cursor_move · posición efímera",
+        "block_create / move / update / delete",
+        "connection_create / delete"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Servidor → Clientes",
+      "items": [
+        "room_snapshot · inicio o reconexión",
+        "participant_joined / left · presencia",
+        "block_* / connection_* · deltas aceptados",
+        "operation_rejected · operación inválida"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Reglas del protocolo",
+      "items": [
+        "Snapshot sólo al sincronizar",
+        "Cada mutación aceptada incrementa version",
+        "Cursores no forman parte de BoardState",
+        "Última escritura aceptada por servidor gana"
+      ]
+    }
+  ]
+}
