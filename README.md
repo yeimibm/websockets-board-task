@@ -10,15 +10,9 @@ Requisitos: Docker Engine con Docker Compose v2.
 docker compose up --build
 ```
 
-Luego abra `http://localhost:3000` en dos ventanas, use nombres distintos y entre a la misma sala. La API expone su comprobación de salud en `http://localhost:8000/health` y el WebSocket en `ws://localhost:8000/ws/rooms/{roomId}`.
+abrir `http://localhost:3000` en dos ventanas, use nombres distintos y entre a la misma sala. La API expone su comprobación de salud en `http://localhost:8000/health` y el WebSocket en `ws://localhost:8000/ws/rooms/{roomId}`.
 
-Para detener el entorno:
 
-```bash
-docker compose down
-```
-
-No hay volúmenes persistentes que borrar. `docker compose down` detiene los servicios y cualquier reinicio de `realtime-api` comienza sin salas previas.
 
 ## Desarrollo local
 
@@ -45,7 +39,7 @@ Los comandos del monorepo son:
 | `pnpm test` | Ejecuta las pruebas |
 | `pnpm typecheck` | Verifica los proyectos TypeScript |
 
-Puede copiar `.env.example` a `.env` para cambiar los puertos y la URL pública del WebSocket. `VITE_WS_URL` debe ser una URL accesible desde el **navegador**, no el nombre DNS interno de Compose; por eso el valor local predeterminado es `ws://localhost:8000`.
+Puede copiar `.env.example` a `.env` para cambiar los puertos y la URL pública del WebSocket. `VITE_WS_URL`.
 
 | Variable | Predeterminado | Uso |
 |---|---|---|
@@ -58,18 +52,37 @@ Puede copiar `.env.example` a `.env` para cambiar los puertos y la URL pública 
 
 ```mermaid
 flowchart LR
-    Browser[Browser] -->|HTTP :3000| Web[Hono + TypeScript]
-    Web --> Client[Cliente en navegador]
-    Client <-->|WebSocket /ws/rooms/roomId| API[FastAPI]
-    subgraph SingleInstance[realtime-api · instancia única]
-        API --> EV[EventValidator]
-        EV --> RM[RoomManager]
-        API --> CM[ConnectionManager]
-        RM --> BS[(BoardState en memoria)]
-        RM --> PM[PresenceManager]
+
+    Browser["Navegador"]
+    Web["Hono + TypeScript"]
+    Client["Cliente Web"]
+    Protocol["@collab/websocket-protocol"]
+
+    Browser -->|"HTTP :3000"| Web
+    Web --> Client
+
+    Client <-->|"WebSocket /ws/rooms/roomId"| API
+
+    subgraph SingleInstance["realtime-api - instancia unica"]
+        API["FastAPI"]
+        EV["EventValidator"]
+        RM["RoomManager"]
+        CM["ConnectionManager"]
+        BS[("BoardState en memoria")]
+        PM["PresenceManager"]
+
+        API --> EV
+        EV --> RM
+
+        API --> CM
+
+        RM --> BS
+        RM --> PM
+
         CM --> PM
     end
-    Protocol[@collab/websocket-protocol] -. tipos .-> Client
+
+    Protocol -.->|"Tipos de eventos"| Client
 ```
 
 ## Modelo y responsabilidades
@@ -127,7 +140,7 @@ flowchart TD
 
 Al entrar, el cliente abre el socket y envía `join_room`. El servidor asigna identidad y color, vincula el socket con la sala y responde con `room_snapshot`. El cliente **reemplaza** su estado local con ese snapshot, establece la versión y sólo entonces pasa a `READY`.
 
-El mismo mecanismo resuelve el *late join*: quien llega tarde recibe bloques y conexiones vigentes, no un tablero vacío. Desde la versión del snapshot procesa únicamente deltas posteriores. Si detecta un salto de secuencia, debe dejar de editar y solicitar un snapshot nuevo.
+El mismo mecanismo resuelve: quien llega tarde recibe bloques y conexiones vigentes, no un tablero vacío. Desde la versión del snapshot procesa únicamente deltas posteriores. Si detecta un salto de secuencia, debe dejar de editar y solicitar un snapshot nuevo.
 
 ### Diagrama 3: secuencia de conexión
 
